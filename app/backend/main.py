@@ -15,7 +15,7 @@ from ai_engine import AIEngine
 from data_engine import DataEngine
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-STORAGE_DIR = REPO_ROOT / "poketrader" / "storage"
+STORAGE_DIR = REPO_ROOT / "research" / "storage"
 
 app = FastAPI()
 

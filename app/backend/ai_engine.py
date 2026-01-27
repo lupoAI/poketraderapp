@@ -11,9 +11,9 @@ import faiss
 _DEFAULT_AVG_FILENAME = "avg_embedding.npy"
 
 # Paths - ADJUST THESE TO MATCH YOUR ACTUAL PATHS FROM THE REFERENCE
-# Assumes app/backend/ai_engine.py -> ../../poketrader/storage/
+# Assumes app/backend/ai_engine.py -> ../../research/storage/
 REPO_ROOT = Path(__file__).resolve().parents[2]
-STORAGE_DIR = REPO_ROOT / "poketrader" / "storage"
+STORAGE_DIR = REPO_ROOT / "research" / "storage"
 YOLO_WEIGHTS = STORAGE_DIR / "model_weights" / "pokemon-yolo11n-seg-v3.pt"
 INDEX_DIR = STORAGE_DIR / "indices" / "model=clip__q=high"
 

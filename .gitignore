@@ -38,7 +38,3 @@
 # generated native folders
 /app/mobile/ios
 /app/mobile/android
-
-# poketrader
-/poketrader/storage
-

@@ -8,3 +8,4 @@ ultralytics
 torch
 pillow
 faiss-cpu
+open_clip_torch

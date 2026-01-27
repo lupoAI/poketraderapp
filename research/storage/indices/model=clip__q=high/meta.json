@@ -1,0 +1,22 @@
+{
+  "adapted_indices": {
+    "pokemon_emb_finetune": {
+      "adapter_checkpoint": "C:\\Users\\salom\\workspace\\poketrade\\storage\\finetuning\\adapter\\pokemon_emb_finetune.pt",
+      "index": "pokemon_cards__adapted=pokemon_emb_finetune__d=128.index",
+      "output_dim": 128,
+      "variant": "raw_adapted"
+    }
+  },
+  "avg_embedding": "avg_embedding.npy",
+  "created_utc": "2025-12-31T17:38:42.598550Z",
+  "default_variant": "raw",
+  "image_folder": "C:\\Users\\salom\\workspace\\poketrade\\storage\\images\\cards",
+  "model_type": "clip",
+  "source": "local_folder",
+  "variants": {
+    "centered_normalized": "pokemon_cards_centered_norm.index",
+    "normalized": "pokemon_cards_norm.index",
+    "raw": "pokemon_cards.index",
+    "raw_centered": "pokemon_cards_centered.index"
+  }
+}

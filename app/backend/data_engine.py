@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-DB_PATH = REPO_ROOT / "poketrader" / "storage" / "db" / "tcgdex_cards.db"
+DB_PATH = REPO_ROOT / "research" / "storage" / "db" / "tcgdex_cards.db"
 
 class DataEngine:
     def __init__(self):
