@@ -1,0 +1,44 @@
+
+/app/backend/venv/
+/app/mobile/node_modules/
+
+# Expo
+/app/mobile/.expo/
+/app/mobile/dist/
+/app/mobile/web-build/
+/app/mobile/expo-env.d.ts
+
+# Native
+/app/mobile/.kotlin/
+/app/mobile/*.orig.*
+/app/mobile/*.jks
+/app/mobile/*.p8
+/app/mobile/*.p12
+/app/mobile/*.key
+/app/mobile/*.mobileprovision
+
+# Metro
+/app/mobile/.metro-health-check*
+
+# debug
+/app/mobile/npm-debug.*
+/app/mobile/yarn-debug.*
+/app/mobile/yarn-error.*
+
+# macOS
+/app/mobile/.DS_Store
+/app/mobile/*.pem
+
+# local env files
+/app/mobile/.env*.local
+
+# typescript
+/app/mobile/*.tsbuildinfo
+
+# generated native folders
+/app/mobile/ios
+/app/mobile/android
+
+# poketrader
+/poketrader/storage
+
