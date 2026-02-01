@@ -829,7 +829,7 @@ def parse_arguments() -> ArgumentParser:
     parser.add_argument(
         "--db-path",
         type=str,
-        default=r".\storage\db\tcgdex_cards.db",
+        default=r".\research\storage\db\tcgdex_cards.db",
         help="SQLite database file. Will be created if it does not exist.",
     )
     parser.add_argument(
