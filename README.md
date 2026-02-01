@@ -58,6 +58,27 @@ The frontend is a mobile application built with React Native and Expo.
     npm install
     ```
 
+
+### 3. Database Setup
+
+The application relies on a local SQLite database for card data. You need to generate this database before running the app.
+
+1.  Ensure the backend virtual environment is activated (from the Backend Setup step).
+    ```powershell
+    .\app\backend\venv\Scripts\Activate.ps1
+    ```
+
+2.  Install the data fetcher script dependency:
+    ```powershell
+    pip install aiohttp
+    ```
+
+3.  Run the data fetch script to populate the database:
+    ```powershell
+    python research\datagetter\tcgdex_fetch.py --db-path research\storage\db\tcgdex_cards.db
+    ```
+    *Note: This process fetches data from the API and may take a few minutes.*
+
 ## Running the Application
 
 ### Option 1: Using Start Scripts (Recommended)
