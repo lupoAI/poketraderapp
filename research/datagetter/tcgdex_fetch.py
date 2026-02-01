@@ -48,11 +48,14 @@ import asyncio
 import json
 import sqlite3
 import logging
+import os
 from argparse import ArgumentParser
 from datetime import date
 from typing import Any, Dict, List, Optional
 
 import aiohttp
+
+from pathlib import Path
 
 API_BASE = "https://api.tcgdex.net/v2"
 
@@ -723,6 +726,29 @@ async def process_card(
     await store_card_record(conn, flat_card, db_lock)
 
 
+def _resolve_db_path(db_path: str) -> str:
+    """Resolve and prepare a SQLite DB file path.
+
+    SQLite can create the DB file, but it will NOT create missing parent
+    directories. On Windows, relative paths are also sensitive to the current
+    working directory, so we anchor them to the `research/` folder.
+    """
+    # Expand ~ and environment variables (e.g. %USERPROFILE%)
+    expanded = os.path.expandvars(db_path)
+    p = Path(expanded).expanduser()
+
+    if not p.is_absolute():
+        # Anchor relative paths to the repository root.
+        # This file lives in: <repo>/research/datagetter/tcgdex_fetch.py
+        repo_root = Path(__file__).resolve().parents[2]
+        p = (repo_root / p).resolve()
+    else:
+        p = p.resolve()
+
+    p.parent.mkdir(parents=True, exist_ok=True)
+    return str(p)
+
+
 async def main_async(args) -> None:
     """Main asynchronous entry point handling card and set retrieval."""
     language: str = args.language
@@ -732,7 +758,15 @@ async def main_async(args) -> None:
     today_str = date.today().isoformat()
 
     # Initialise database
-    conn = sqlite3.connect(db_path, check_same_thread=False)
+    db_path = _resolve_db_path(db_path)
+    print(f"Using SQLite DB at: {db_path}", flush=True)
+    try:
+        conn = sqlite3.connect(db_path, check_same_thread=False)
+    except sqlite3.OperationalError as e:
+        raise sqlite3.OperationalError(
+            f"Unable to open database file: {db_path}. "
+            f"Make sure the parent folder exists and is writable. Original error: {e}"
+        ) from e
     setup_database(conn)
     db_lock = asyncio.Lock()
 
@@ -795,7 +829,7 @@ def parse_arguments() -> ArgumentParser:
     parser.add_argument(
         "--db-path",
         type=str,
-        default=r".\storage\tcgdex_cards.db",
+        default=r".\storage\db\tcgdex_cards.db",
         help="SQLite database file. Will be created if it does not exist.",
     )
     parser.add_argument(
@@ -819,7 +853,7 @@ def parse_arguments() -> ArgumentParser:
     parser.add_argument(
         "--log-path",
         type=str,
-        default=r".\storage\tcgdex_queries.log",
+        default=None,
         help=(
             "Path to a log file for recording API requests. Set to '-' to log to stdout."
         ),
