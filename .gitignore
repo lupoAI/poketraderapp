@@ -38,3 +38,15 @@
 # generated native folders
 /app/mobile/ios
 /app/mobile/android
+
+# PyCharm
+/.idea
+
+# Python
+/app/backend/__pycache__
+
+# Research
+/research/storage/db
+/research/storage/debug_uploads
+
+

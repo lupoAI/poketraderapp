@@ -354,6 +354,31 @@ export default function PortfolioScreen() {
   const brandingStyle = useAnimatedStyle(() => ({ transform: [{ scale: 1 }] }));
 
 
+
+  if (portfolio.length === 0) {
+    return (
+      <View className="flex-1 bg-black items-center justify-center p-6">
+        <StatusBar style="light" />
+        <View className="items-center max-w-sm">
+          <View className="w-24 h-24 bg-neutral-900 rounded-full items-center justify-center mb-8 border border-white/10 shadow-lg shadow-black/50">
+            <MaterialCommunityIcons name="cards-playing-outline" size={40} color="#D5A100" />
+          </View>
+          <Text className="text-white text-3xl font-bold mb-3 text-center tracking-tight">Your Portfolio is Empty</Text>
+          <Text className="text-gray-400 text-center mb-10 px-4 leading-relaxed font-medium">
+            Start building your collection by scanning your Pokémon cards. Track values, history, and more.
+          </Text>
+          <TouchableOpacity
+            onPress={() => router.push('/scan')}
+            activeOpacity={0.8}
+            className="bg-yellow-400 px-10 py-4 rounded-full shadow-lg shadow-yellow-400/20"
+          >
+            <Text className="text-black font-extrabold text-sm tracking-widest uppercase">Scan First Card</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
   return (
     <View className="flex-1 bg-black">
       <StatusBar style="light" />

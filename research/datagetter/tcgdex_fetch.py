@@ -814,6 +814,11 @@ async def main_async(args) -> None:
             for c in cards_brief
         ]
         await asyncio.gather(*(set_tasks + card_tasks))
+    
+    # Workaround for Windows: Allow underlying transports to close gracefully
+    # to avoid "Event loop is closed" RuntimeError from aiohttp.
+    await asyncio.sleep(0.250)
+
     conn.close()
 
 
