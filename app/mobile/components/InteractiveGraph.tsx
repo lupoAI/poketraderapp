@@ -155,11 +155,12 @@ export const InteractiveGraph = ({
     );
 
     const gesture = useMemo(() => Gesture.Pan()
+        .activateAfterLongPress(100)
         .minDistance(0)
-        .onTouchesDown((e) => {
+        .onStart((e) => {
             isInteracting.value = true;
-            activeFingers.value = e.numberOfTouches;
-            const x = Math.max(0, Math.min(e.allTouches[0].x, width));
+            activeFingers.value = 1;
+            const x = Math.max(0, Math.min(e.x, width));
             fingerX1.value = x;
             fingerX2.value = x;
         })
@@ -171,18 +172,23 @@ export const InteractiveGraph = ({
             }
         })
         .onTouchesMove((e) => {
-            activeFingers.value = e.numberOfTouches;
-            if (e.numberOfTouches >= 2) {
-                const x1 = Math.max(0, Math.min(e.allTouches[0].x, width));
-                const x2 = Math.max(0, Math.min(e.allTouches[1].x, width));
-                fingerX1.value = Math.min(x1, x2);
-                fingerX2.value = Math.max(x1, x2);
+            if (isInteracting.value) {
+                activeFingers.value = e.numberOfTouches;
+                if (e.numberOfTouches >= 2) {
+                    const x1 = Math.max(0, Math.min(e.allTouches[0].x, width));
+                    const x2 = Math.max(0, Math.min(e.allTouches[1].x, width));
+                    fingerX1.value = Math.min(x1, x2);
+                    fingerX2.value = Math.max(x1, x2);
+                }
+            }
+        })
+        .onTouchesDown((e) => {
+            if (isInteracting.value) {
+                activeFingers.value = e.numberOfTouches;
             }
         })
         .onTouchesUp((e) => {
-            if (e.numberOfTouches === 0) {
-                isInteracting.value = false;
-            } else {
+            if (isInteracting.value) {
                 activeFingers.value = e.numberOfTouches;
             }
         })

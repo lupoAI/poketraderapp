@@ -88,8 +88,6 @@ export default function ScannerScreen() {
                 setStatusMessage("Card not detected. Try again.");
                 setTimeout(() => setStatusMessage(null), 3000);
             } else {
-                console.log("Scan Results (Raw):", JSON.stringify(data, null, 2));
-
                 // Enrich with real TCGdex prices
                 const allIds: string[] = [];
                 data.cards.forEach((cardGroup: any) => {
@@ -97,7 +95,6 @@ export default function ScannerScreen() {
                 });
 
                 if (allIds.length > 0) {
-                    console.log(`[Scanner] Enriching ${allIds.length} match candidates with TCGdex...`);
                     const tcgPrices = await getBatchPrices(allIds);
                     data.cards.forEach((cardGroup: any) => {
                         cardGroup.top_matches.forEach((m: any) => {
@@ -105,7 +102,6 @@ export default function ScannerScreen() {
                             if (pricing) {
                                 const current = pricing.avg || pricing.trend || 0;
                                 if (current > 0) {
-                                    console.log(`[Scanner] Enriched ${m.card_id}: ${current}€`);
                                     m.price = formatEuro(current);
                                     const baseForChange = pricing.avg7 || pricing.avg30 || pricing.avg;
                                     const pctChange = (baseForChange && current) ? ((current - baseForChange) / baseForChange) * 100 : 0;

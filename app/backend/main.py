@@ -33,9 +33,8 @@ ai_engine = AIEngine()
 print("Initializing Data Engine...")
 data_engine = DataEngine()
 
-# In-memory price cache for daily items
-# Format: {card_id: {"price": float, "date": str}}
-price_cache = {}
+# In-memory price cache for daily items is no longer needed
+# as pricing is handled on-the-fly or client-side.
 
 def get_today_str():
     return datetime.now().strftime("%Y-%m-%d")
@@ -59,12 +58,7 @@ def generate_card_price(card_id: str) -> float:
     return round(base_val * fluctuation, 2)
 
 
-class CardResponse(BaseModel):
-    card_id: str
-    name: Optional[str] = None
-    confidence: Optional[float] = None
-    image: Optional[str] = None
-    price: Optional[str] = None # Simplified
+# CardResponse model removed (unused)
 
 @app.get("/")
 def read_root():
@@ -133,115 +127,6 @@ async def identify_card(file: UploadFile = File(...), is_cropped: bool = False):
         "count": len(results),
         "cards": results
     }
-
-@app.get("/api/card/{card_id}")
-def get_card(card_id: str):
-    data = data_engine.get_card_details(card_id)
-    if not data:
-        raise HTTPException(status_code=404, detail="Card not found")
-    return data
-
-
-@app.post("/api/portfolio/prices")
-def get_portfolio_prices(card_ids: List[str], days: int = 30):
-    if not card_ids:
-        return []
-        
-    aggregate_history = {} # timestamp -> total_value
-    
-    for cid in card_ids:
-        # We reuse the deterministic logic from get_card_prices
-        seed_str = hashlib.md5(cid.encode()).hexdigest()
-        seed = int(seed_str[:8], 16)
-        random.seed(seed)
-        
-        base_price = 5.0 + (seed % 195)
-        mu = 0.0002
-        sigma = 0.015
-        
-        current_price = base_price
-        now = datetime.now()
-        
-        for i in range(365):
-            epsilon = random.gauss(0, 1)
-            current_price = current_price * math.exp((mu - 0.5 * (sigma**2)) + sigma * epsilon)
-            
-            # Use 1Y history to ensure we can slice any range
-            timestamp = int((now - timedelta(days=(364 - i))).timestamp() * 1000)
-            
-            if timestamp not in aggregate_history:
-                aggregate_history[timestamp] = 0.0
-            aggregate_history[timestamp] += current_price
-
-    # Convert dict to sorted list of objects
-    sorted_history = [
-        {"timestamp": ts, "value": round(val, 2)}
-        for ts, val in sorted(aggregate_history.items())
-    ]
-    
-    # Slice the requested number of days from the end
-    return sorted_history[-days:]
-
-@app.get("/api/card/{card_id}/prices")
-def get_card_prices(card_id: str, days: int = 30):
-    # Deterministic seed based on card_id
-    seed_str = hashlib.md5(card_id.encode()).hexdigest()
-    seed = int(seed_str[:8], 16)
-    random.seed(seed)
-    
-    # Base price based on the card_id hash (random value between 5 and 200)
-    base_price = 5.0 + (seed % 195)
-    
-    # Geometric Brownian Motion params
-    # We use very small drift and volatility to keep the price realistic over 1Y
-    mu = 0.0002  
-    sigma = 0.015 
-    
-    prices = []
-    current_price = base_price
-    
-    # Generate 365 days of data ALWAYS to keep it deterministic across requests
-    now = datetime.now()
-    full_history = []
-    for i in range(365):
-        epsilon = random.gauss(0, 1)
-        current_price = current_price * math.exp((mu - 0.5 * (sigma**2)) + sigma * epsilon)
-        
-        timestamp = int((now - timedelta(days=(364 - i))).timestamp() * 1000)
-        full_history.append({
-            "timestamp": timestamp,
-            "value": round(current_price, 2)
-        })
-    
-    # Return only the requested number of days from the end
-    return full_history[-days:]
-
-@app.get("/api/card/{card_id}/price")
-def get_card_price(card_id: str):
-    today = get_today_str()
-    
-    if card_id in price_cache and price_cache[card_id]["date"] == today:
-        return {"card_id": card_id, "price": price_cache[card_id]["price"], "cached": True}
-    
-    price = generate_card_price(card_id)
-    price_cache[card_id] = {"price": price, "date": today}
-    
-    return {"card_id": card_id, "price": price, "cached": False}
-
-@app.post("/api/cards/prices")
-def get_batch_prices(card_ids: List[str]):
-    today = get_today_str()
-    results = {}
-    
-    for cid in card_ids:
-        if cid in price_cache and price_cache[cid]["date"] == today:
-            results[cid] = price_cache[cid]["price"]
-        else:
-            price = generate_card_price(cid)
-            price_cache[cid] = {"price": price, "date": today}
-            results[cid] = price
-            
-    return results
 
 @app.get("/api/trends")
 def get_trends(range_type: str = Query("1W", alias="range")):
