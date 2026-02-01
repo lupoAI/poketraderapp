@@ -322,7 +322,7 @@ export default function PortfolioScreen() {
     const pBottomShift = (1 - pScale) * pHeight;
     const mTopComp = (1 - mScale) * (mHeight * 0.5);
 
-    // Add a 6px gap that reveals itself as we scroll up to improve legibility
+    // Add a gap that reveals itself as we scroll up to improve legibility
     const gap = interpolate(scrollY.value, [0, SCROLL_DISTANCE], [0, 6], Extrapolate.CLAMP);
     const translateY = -(pBottomShift + mTopComp) + gap;
 
@@ -505,13 +505,13 @@ export default function PortfolioScreen() {
             </Animated.View>
 
             {/* Price Area: Split into two animated blocks for independent control */}
-            <Animated.View className="items-start mb-1" style={animatedPriceStyle} pointerEvents="none">
+            <Animated.View className="items-start mb-2" style={animatedPriceStyle} pointerEvents="none">
               <View className="flex-row items-baseline">
                 <Text className="text-white text-6xl font-extrabold">€</Text>
                 <Text className="text-white text-6xl font-extrabold ml-2">
                   {Math.floor(displayIsInteracting ? displayPrice : totalValue).toLocaleString('de-DE')}
                 </Text>
-                <Text className="text-white text-2xl font-bold opacity-60">
+                <Text className="text-white text-3xl font-bold opacity-60">
                   .{((displayIsInteracting ? displayPrice : totalValue) % 1).toFixed(2).split('.')[1]}
                 </Text>
               </View>

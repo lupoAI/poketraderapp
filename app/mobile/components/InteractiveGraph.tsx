@@ -155,7 +155,7 @@ export const InteractiveGraph = ({
     );
 
     const gesture = useMemo(() => Gesture.Pan()
-        .activateAfterLongPress(100)
+        .activateAfterLongPress(75)
         .minDistance(0)
         .onStart((e) => {
             isInteracting.value = true;
